@@ -1,5 +1,6 @@
-flask
-openai
+python-dotenv
 requests
-python-docx
+openai
+flask
 pandas
+python-docx

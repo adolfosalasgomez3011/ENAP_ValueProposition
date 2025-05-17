@@ -1,4 +1,5 @@
 import os, requests, openai
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,5 +13,15 @@ def query_llm(prompt, model='llama3'):
         )
         return response.choices[0].message.content
     else:
-        res = requests.post('http://localhost:11434/api/generate', json={'model': model, 'prompt': prompt})
-        return res.json().get('response', 'No response')
+        res = requests.post(
+            'http://localhost:11434/api/generate',
+            json={'model': model, 'prompt': prompt},
+            stream=True
+        )
+
+        output = ""
+        for line in res.iter_lines():
+            if line:
+                chunk = json.loads(line.decode("utf-8"))
+                output += chunk.get("response", "")
+        return output
